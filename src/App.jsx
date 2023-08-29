@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import {
+  useGetAllPostQuery,
+  useGetPostByIdQuery,
+  useDeletePostMutation,
+  useCreatePostMutation,
+  useUpdatePostMutation,
+} from "./redux/post";
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [deletePost, res] = useDeletePostMutation();
+  const [createPost, res1] = useCreatePostMutation();
+  const [updatePost, res2] = useUpdatePostMutation();
+  console.log("createPost", res1);
+  console.log("updatePost", res2);
+  const [id, setId] = useState(1);
+  const { data, isLoading, isError } = useGetAllPostQuery();
+  const { data: SinglePostData } = useGetPostByIdQuery(id);
+  console.log(data);
+  console.log("lazy data", SinglePostData);
+  const handleChange = (e) => {
+    setId(e.target.value);
+  };
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <div className="App">
+        <h1>Hello world</h1>
+        <input type="number" onChange={handleChange} />
+        {/* deletePost function will delete the post */}
+        <button onClick={() => deletePost(2)}>Delete</button>
+        {/* Create post */}
+        <button
+          onClick={() => {
+            createPost({
+              title: "Hello",
+              body: "Hello world",
+              userId: 100,
+            });
+          }}>
+          Create Post
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        {/* update post */}
+        <button
+          onClick={() => {
+            updatePost({
+              id: 1,
+              title: "Hello",
+              body: "Hello world",
+              userId: 100,
+            });
+          }}>
+          Update Post
+        </button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
